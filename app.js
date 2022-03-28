@@ -2,62 +2,130 @@
 
 const mongoose = require("mongoose");
 
-mongoose.connect("mongodb://localhost:27017/fruitsDB")
+mongoose.connect("mongodb://localhost:27017/fruitsDB");
 
 const fruitSchema = new mongoose.Schema({
-    name: String,
-    rating: Number,
-    review: String
+  name: {
+    type: String,
+    // required: [1, "Please check your data entry, name not given"]
+  },
+
+  rating: {
+    type: Number,
+    min: 1,
+    max: 10
+  },
+  review: String,
 });
 
 const Fruit = mongoose.model("Fruit", fruitSchema);
 
 const fruit = new Fruit({
-    name: "Apple",
-    rating: 7,
-    review: "Eat apple a day"
+  // name: "Apple",
+  rating: 10,
+  review: "Eat ",
 });
 
-
-// fruit.save()
+// fruit.save();
 
 const personSchema = new mongoose.Schema({
-    name: String,
-    age: Number,
+  name: String,
+  age: Number,
+  favouriteFruit: fruitSchema
 });
 
 const Person = mongoose.model("People", personSchema);
 
-const person = new Person({
-    name: "Ajith",
-    age: 27,
-    
-});
-person.save()
-
-const kiwi = new Fruit({
-    name: "Kiwi",
-    score: 7,
-    review: "super"
-});
-const orange = new Fruit({
-    name: "Orange",
-    score: 7,
-    review: "super"
-});
-const banana = new Fruit({
-    name: "Banana",
-    score: 7,
-    review: "super"
-});
-
-Fruit.insertMany([kiwi, orange, banana], function(err){
-    if(err){
-        console.log(err);
-    }else{
-        console.log("Successfully saved the fruits to fruitsDB");
-    }
+const mango = new Fruit({
+  name: "Mango",
+  rating: 9,
+  review: "Great fruit"
 })
+mango.save();
+
+Person.updateMany({name: "Ajith"}, {favouriteFruit: mango}, function(err){
+  if(err){
+    console.log(err);
+  }else {
+    console.log("fruit added");
+  }
+})
+
+
+// const person = new Person({
+//   name: "Jack",
+//   age: 27,
+//   favouriteFruit: pineapple
+// });
+// person.save()
+
+// const kiwi = new Fruit({
+//     name: "Kiwi",
+//     score: 7,
+//     review: "super"
+// });
+// const orange = new Fruit({
+//     name: "Orange",
+//     score: 7,
+//     review: "super"
+// });
+// const banana = new Fruit({
+//     name: "Banana",
+//     score: 7,
+//     review: "super"
+// });
+
+// Fruit.insertMany([kiwi, orange, banana], function(err){
+//     if(err){
+//         console.log(err);
+//     }else{
+//         console.log("Successfully saved the fruits to fruitsDB");
+//     }
+// });
+
+Fruit.find(function (err, fruits) {
+  if (err) {
+    console.log(err);
+  } else {
+    // console.log(fruits);
+    // mongoose.connection.close();
+    fruits.forEach(function (fruit) {
+      console.log(fruit.name);
+    });
+  }
+});
+
+// Fruit.updateOne(
+//   { _id: "6240cf30352c93a314081464" },
+//   { name: "Papaya" },
+//   function (err) {
+//     if (err) {
+//       console.log(err);
+//     } else {
+//       console.log("updated");
+//     }
+//   }
+// );
+
+// Fruit.deleteOne({_id: "6240cf5d443b2b82509c4776"}, function (err) {
+//         if (err) {
+//           console.log(err);
+//         } else {
+//           console.log("Deleted");
+//         }
+//       })
+
+      Fruit.deleteMany({name: "Banana"}, function (err) {
+        if (err) {
+          console.log(err);
+        } else {
+          console.log("Deleted");
+        }
+      })
+
+
+
+
 
 
 
@@ -93,7 +161,7 @@ Fruit.insertMany([kiwi, orange, banana], function(err){
 //     findDocuments(db, function(){
 //         client.close();
 //     })
-    
+
 // });
 
 // const insertDocuments = function(db, callback){
@@ -125,14 +193,14 @@ Fruit.insertMany([kiwi, orange, banana], function(err){
 //     });
 // };
 
-const findDocuments = function(db, callback){
-    //get the document collection
-    const collection = db.collection("fruits");
-    //find some documents
-    collection.find({}).toArray(function(err, fruits){
-        assert.equal(err, null);
-        console.log("found the following records");
-        console.log(fruits);
-        callback(fruits)
-    })
-}
+// const findDocuments = function (db, callback) {
+//   //get the document collection
+//   const collection = db.collection("fruits");
+//   //find some documents
+//   collection.find({}).toArray(function (err, fruits) {
+//     assert.equal(err, null);
+//     console.log("found the following records");
+//     console.log(fruits);
+//     callback(fruits);
+//   });
+// };
